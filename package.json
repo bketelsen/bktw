@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "autoprefixer": "^10.2.4",
+    "postcss": "^8.2.6",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "^2.0.3"
+  },  
+  "scripts": {
+    "css" : "postcss src/css/main.css -o assets/css/main.css"
+  }
+}
