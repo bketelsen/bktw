@@ -15,3 +15,5 @@ linux:
 deploy: linux
 	scp ./bktw content.brian.dev:~/bktwnew
 
+setup:
+	npm install

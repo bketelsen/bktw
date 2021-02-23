@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,8 @@ var homepage Homepage
 var global Global
 var categories []Category
 var updateMutex sync.Mutex
+var strapi string
+var port string
 
 type HomeContext struct {
 	Articles   []Article
@@ -62,7 +65,7 @@ func CategoryBySlug(slug string) (Category, error) {
 func getArticles() {
 	updateMutex.Lock()
 	defer updateMutex.Unlock()
-	resp, err := http.Get("https://content.brian.dev/articles")
+	resp, err := http.Get(strapi + "/articles")
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +81,7 @@ func getArticles() {
 func getCategories() {
 	updateMutex.Lock()
 	defer updateMutex.Unlock()
-	resp, err := http.Get("https://content.brian.dev/categories")
+	resp, err := http.Get(strapi + "/categories")
 	if err != nil {
 		panic(err)
 	}
@@ -95,7 +98,7 @@ func getCategories() {
 func getGlobal() {
 	updateMutex.Lock()
 	defer updateMutex.Unlock()
-	resp, err := http.Get("https://content.brian.dev/global")
+	resp, err := http.Get(strapi + "/global")
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +114,7 @@ func getGlobal() {
 func getHomepage() {
 	updateMutex.Lock()
 	defer updateMutex.Unlock()
-	resp, err := http.Get("https://content.brian.dev/homepage")
+	resp, err := http.Get(strapi + "/homepage")
 	if err != nil {
 		panic(err)
 	}
@@ -126,6 +129,15 @@ func getHomepage() {
 }
 func main() {
 
+	strapi = os.Getenv("STRAPI_SERVER")
+	if strapi == "" {
+		panic("STRAPI_SERVER not set. export STRAPI_SERVER=https://your.strapi.com")
+	}
+
+	port = os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	router := gin.Default()
 
 	templ := template.Must(template.New("").ParseFS(f, "templates/*.tmpl"))
@@ -189,5 +201,5 @@ func main() {
 		)
 	})
 
-	router.Run(":8181")
+	router.Run(":" + port)
 }
