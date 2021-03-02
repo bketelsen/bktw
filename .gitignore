@@ -1,3 +1,5 @@
 bktw
 node_modules
 .envrc
+bktw.exe
+.DS_Store
